@@ -25,7 +25,7 @@ public class MyLinkedList {
     }
 
     public MyLinkedList() {
-        // TODO
+        // Everything's already defaulted to null or 0
     }
 
     public int size() {
@@ -45,30 +45,62 @@ public class MyLinkedList {
     }
 
     public void addLast(Chicken c) {
-        // TODO
+        if (size == 0) { // First chicken added
+            tail = head = new Node(c, null, null);
+        } else { // Non-empty list
+            tail = tail.next = new Node(c, tail, null);
+        }
+        ++size;
     }
 
     public void addFirst(Chicken c) {
-        // TODO
+        if (size == 0) {
+            tail = head = new Node(c, null, null);
+        } else {
+            head = head.prev = new Node(c, null, head);
+        }
+        ++size;
     }
 
     public Chicken get(int index) {
-        // TODO
-        return null;
+        return getNode(index).val;
+    }
+
+    private Node getNode(int index) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("The specified index is not within the list.");
+        }
+        Node res = head;
+        for (int i = 0; i < index; ++i) {
+            res = res.next;
+        }
+        return res;
     }
 
     public Chicken remove(int index) {
-        // TODO
-        return null;
+        if (size == 0) {
+            throw new IllegalStateException("List is empty");
+        }
+        Node res = getNode(index);
+        // Link the preceding and following nodes to each other
+        if (res.prev != null)
+            res.prev.next = res.next;
+        if (res.next != null)
+            res.next.prev = res.prev;
+        // Update the head and tail pointers if necessary
+        if (res == head)
+            head = head.next;
+        if (res == tail)
+            tail = tail.prev;
+        --size;
+        return res.val;
     }
 
     public Chicken removeFirst() {
-        // TODO
-        return null;
+        return remove(0);
     }
 
     public Chicken removeLast() {
-        // TODO
-        return null;
+        return remove(size-1);
     }
 }

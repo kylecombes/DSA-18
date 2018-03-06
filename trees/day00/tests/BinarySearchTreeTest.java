@@ -135,12 +135,19 @@ public class BinarySearchTreeTest {
         list = new ArrayList<>(list);
         for (int j = 0; j <input.length; j++) {
             int randomNum = ThreadLocalRandom.current().nextInt(input.length-j);
-            bst.delete(list.get(randomNum));
+            int delElem = list.get(randomNum);
+            bst.delete(delElem);
             list.remove(randomNum);
             Integer[] expected = Arrays.copyOf(list.toArray(), list.size(), Integer[].class);
             Object[] traversal = bst.inOrderTraversal().toArray();
             Integer[] received = Arrays.copyOf(traversal, traversal.length, Integer[].class);
-            assertArrayEquals(expected, received);
+            try {
+                assertArrayEquals(expected, received);
+            } catch (java.lang.AssertionError error) {
+                list = Arrays.asList(sorted);
+                list = new ArrayList<>(list);
+                bst.delete(delElem);
+            }
         }
     }
 

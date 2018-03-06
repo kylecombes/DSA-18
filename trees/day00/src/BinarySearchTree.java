@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.List;
 
 public class BinarySearchTree<T extends Comparable<T>> {
@@ -28,8 +29,22 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
     public List<T> inOrderTraversal() {
-        // TODO
-        return null;
+        List<T> res = new LinkedList<>();
+        traverseNodeInOrder(root, res);
+        return res;
+    }
+
+    // Runtime: O(N)
+    private void traverseNodeInOrder(TreeNode<T> node, List<T> result) {
+        if (node == null) // Reached bottom of tree
+            return;
+
+        // Traverse left branch
+        traverseNodeInOrder(node.leftChild, result);
+        // Add current node
+        result.add(node.key);
+        // Traverse right branch
+        traverseNodeInOrder(node.rightChild, result);
     }
 
     /**
@@ -66,8 +81,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
             replacement = (n.hasRightChild()) ? n.rightChild : n.leftChild; // replacement is the non-null child
         else {
             // Case 3: two children
-            // TODO
-            replacement = null;
+            replacement = findSuccessor(n);
         }
 
         // Put the replacement in its correct place, and set the parent.
@@ -95,14 +109,54 @@ public class BinarySearchTree<T extends Comparable<T>> {
         return null;
     }
 
+    // Worst-case runtime: O(N)
     private TreeNode<T> findPredecessor(TreeNode<T> n) {
-        // TODO
-        return null;
+        if (n.leftChild != null) { // The next lesser element is down to the left
+            n = n.leftChild;
+
+            // Go down the tree to find the greatest node less than the original n
+            while (n.rightChild != null)
+                n = n.rightChild;
+            return n;
+        } else { // Keep going up the tree until we hit the root or find an element less than the original node
+            T origKey = n.key;
+
+            while (n != null) {
+                // Check if this element is less than the original node key
+                if (origKey.compareTo(n.key) >= 0) {
+                    return n;
+                } else { // Go up the tree
+                    n = n.parent;
+                }
+            }
+            // Ran out of tree to ascend
+            return null;
+        }
     }
 
+    // Worst-case runtime: O(N)
     private TreeNode<T> findSuccessor(TreeNode<T> n) {
-        // TODO
-        return null;
+        if (n.rightChild != null) { // The next greater element is down to the right
+            n = n.rightChild;
+
+            // Go down the tree to find the least node greater than the original n
+            while (n.leftChild != null)
+                n = n.leftChild;
+            return n;
+        } else { // Keep going up the tree until we hit the root or find an element greater than the original node
+            T origKey = n.key;
+
+            while (n != null) {
+                // Check if this element is greater than the original node key
+                if (origKey.compareTo(n.key) <= 0) {
+                    return n;
+                } else { // Go up the tree
+                    n = n.parent;
+                }
+            }
+            // Ran out of tree to ascend
+            return null;
+        }
     }
 
     /**

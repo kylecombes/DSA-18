@@ -37,6 +37,20 @@ public class NQueens {
         return false;
     }
 
+    private static boolean horizontalVerticalValid(char[][] board, int r, int c) {
+        // Check the row
+        for (int x = 0; x < board.length; ++x) {
+            if (x == c) continue;
+            if (board[r][x] == 'Q') return false; // Found a queen
+        }
+        // Check the column
+        for (int y = 0; y < board.length; ++y) {
+            if (y == r) continue;
+            if (board[y][c] == 'Q') return false; // Found a queen
+        }
+        return true;
+    }
+
 
     /**
      * Creates a deep copy of the input array and returns it
@@ -50,9 +64,31 @@ public class NQueens {
 
 
     public static List<char[][]> nQueensSolutions(int n) {
-        // TODO
         List<char[][]> answers = new ArrayList<>();
+        char[][] board = new char[n][n];
+        for (int i = 0; i < n; ++i)
+            for (int j = 0; j < n; ++j)
+                board[i][j] = '.';
+
+        findValidPlacements(0, board, 0, answers);
         return answers;
+    }
+
+    private static void findValidPlacements(int curPos, char[][] board, int placedQueens, List<char[][]> answers) {
+        if (placedQueens == board.length) {
+            answers.add(copyOf(board));
+            return;
+        }
+
+        for (; curPos < board.length*board.length; ++curPos) {
+            int row = curPos / board.length;
+            int col = curPos % board.length;
+            board[row][col] = 'Q';
+            if (horizontalVerticalValid(board, row, col) && !checkDiagonal(board, row, col)) {
+                findValidPlacements(curPos+1, board, placedQueens+1, answers);
+            }
+            board[row][col] = '.';
+        }
     }
 
 }

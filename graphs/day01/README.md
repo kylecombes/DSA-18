@@ -4,9 +4,9 @@ This homework is due on **Next Monday (April 2) at 10pm**.
 
 # Resources
 
--[U Texas Slides](https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic13RecursiveBacktracking.pdf)
-
--[Our Slides](https://drive.google.com/open?id=1Cu_24HYXFxT4x29JgURj60sF4KTPH3Uh6E0ARDguJqU)
+- [U Texas Slides](https://www.cs.utexas.edu/~scottm/cs314/handouts/slides/Topic13RecursiveBacktracking.pdf)
+- [Stanford PDF](https://drive.google.com/open?id=1PoNEWRAI6s7em0eHVPgQAL2l-2__eq4l)
+- [Our Slides](https://drive.google.com/open?id=1Cu_24HYXFxT4x29JgURj60sF4KTPH3Uh6E0ARDguJqU)
 
 # Learning Goals
 
@@ -42,7 +42,7 @@ Write your code in the `NQueens` class. Note that for the tests to pass, you wil
 
 <details>
   <summary>Hint 1</summary>
-  There must be a queen in every row of the chess board. Start at the top row of the board, and try to assign a queen to each row. Pass along which row you are currently assigning as a variable in your recursive function.
+  There must be a queen in every row of the chess board. Start at the top row of the board, and try to assign a queen to each column. Pass along which row you are currently assigning as a variable in your recursive function.
 </details>
 
 <details>

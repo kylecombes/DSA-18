@@ -2,6 +2,7 @@
  * Solver definition for the 8 Puzzle challenge
  * Construct a tree of board states using A* to find a path to the goal
  */
+package src;
 
 import java.util.*;
 

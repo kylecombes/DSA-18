@@ -1,3 +1,5 @@
+package src;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -86,6 +88,19 @@ public class Board {
         }
         return true;
     }
+
+    @Override
+    public int hashCode(){
+        int hash = 0;
+        int dimL = size();
+        for (int r = 0; r < dimL; r++){
+            for (int c = 0; c < dimL; c++){
+                hash += tiles[r][c] * (10^(3*r+c));
+            }
+        }
+        return hash;
+    }
+
 
     public static void main(String[] args) {
         // DEBUG - Your solution can include whatever output you find useful

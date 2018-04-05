@@ -62,8 +62,8 @@ public class Solver {
      * Research how to check this without exploring all states
      */
     public boolean isSolvable() {
-        // TODO: Your code here
-        return false;
+//        return this.board.solvable();
+        return false; // until initialization is coded this cannot be implemented
     }
 
     /*

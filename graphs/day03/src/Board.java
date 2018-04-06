@@ -22,6 +22,7 @@ public class Board {
      */
     public Board(int[][] b) {
         tiles = b;
+        n = tiles.length;
     }
 
     /*
@@ -29,14 +30,13 @@ public class Board {
      (equal to 3 for 8 puzzle, 4 for 15 puzzle, 5 for 24 puzzle, etc)
      */
     private int size() {
-        return tiles.length;
+        return n;
     }
 
     /*
      * Sum of the manhattan distances between the tiles and the goal
      */
     public int manhattan() {
-        // TODO: Your code here
         int manhattansum = 0;
         for (int x = 0; x < n; x++) {
             for (int y = 0; y < n; y++) {
@@ -172,7 +172,6 @@ public class Board {
         // DEBUG - Your solution can include whatever output you find useful
         int[][] initState = {{1, 2, 3}, {4, 0, 6}, {7, 8, 5}};
         Board board = new Board(initState);
-
         System.out.println("Size: " + board.size());
         System.out.println("Solvable: " + board.solvable());
         System.out.println("Manhattan: " + board.manhattan());

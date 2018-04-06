@@ -1,3 +1,6 @@
+package src;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,13 +14,13 @@ public class Board {
 
     //TODO
     // Create a 2D array representing the solved board state
-    private int[][] goal = {{}};
+    private int[][] goal = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
 
     /*
      * Set the global board size and tile state
      */
     public Board(int[][] b) {
-        // TODO: Your code here
+        tiles = b;
     }
 
     /*
@@ -25,8 +28,7 @@ public class Board {
      (equal to 3 for 8 puzzle, 4 for 15 puzzle, 5 for 24 puzzle, etc)
      */
     private int size() {
-        // TODO: Your code here
-        return 0;
+        return tiles.length;
     }
 
     /*
@@ -50,16 +52,71 @@ public class Board {
      * Research how to check this without exploring all states
      */
     public boolean solvable() {
-        // TODO: Your code here
-        return false;
+        List<Integer> linearRep = new ArrayList<>();
+        for (int[] row: tiles){
+            for (int i: row){
+                linearRep.add(i);
+            }
+        }
+        int inversions = 0;
+        for (int i = 0; i < linearRep.size()-1; i++){
+            for(int j = i+1; j < linearRep.size(); j++){
+                if (linearRep.get(j) < linearRep.get(i) && linearRep.get(i) != 0 && linearRep.get(j) != 0) inversions++;
+            }
+        }
+        return (inversions % 2 == 0);
     }
 
     /*
      * Return all neighboring boards in the state tree
      */
     public Iterable<Board> neighbors() {
-        // TODO: Your code here
-        return null;
+        List<Board> neighbors = new ArrayList<>();
+        int row = 0;
+        int col = 0;
+        int dimL = size();
+        for (; row < dimL; row++){
+            for(; col < dimL; col++){
+                if(tiles[row][col] == 0) break;
+            }
+        }
+        if(row != 0){
+            // has room to move up
+            int toSwap = tiles[row + 1][col];
+            tiles[row][col] = toSwap;
+            tiles[row + 1][col] = 0;
+            neighbors.add(new Board(tiles));
+            tiles[row + 1][col] = toSwap;
+            tiles[row][col] = 0;
+        }
+        if(row != dimL){
+            // has room to move down
+            int toSwap = tiles[row - 1][col];
+            tiles[row][col] = toSwap;
+            tiles[row - 1][col] = 0;
+            neighbors.add(new Board(tiles));
+            tiles[row - 1][col] = toSwap;
+            tiles[row][col] = 0;
+        }
+        if(col != 0){
+            // has room to move right
+            int toSwap = tiles[row][col + 1];
+            tiles[row][col] = toSwap;
+            tiles[row][col + 1] = 0;
+            neighbors.add(new Board(tiles));
+            tiles[row][col + 1] = toSwap;
+            tiles[row][col] = 0;
+        }
+        if(col != dimL){
+            // has room to move left
+            int toSwap = tiles[row][col - 1];
+            tiles[row][col] = toSwap;
+            tiles[row][col - 1] = 0;
+            neighbors.add(new Board(tiles));
+            tiles[row - 1][col] = toSwap;
+            tiles[row][col] = 0;
+        }
+        return neighbors;
     }
 
     /*
@@ -86,6 +143,19 @@ public class Board {
         }
         return true;
     }
+
+    @Override
+    public int hashCode(){
+        int hash = 0;
+        int dimL = size();
+        for (int r = 0; r < dimL; r++){
+            for (int c = 0; c < dimL; c++){
+                hash += tiles[r][c] * ((dimL^2)^(dimL*r+c));
+            }
+        }
+        return hash;
+    }
+
 
     public static void main(String[] args) {
         // DEBUG - Your solution can include whatever output you find useful

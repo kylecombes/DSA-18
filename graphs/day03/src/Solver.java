@@ -1,16 +1,15 @@
+package src;
+
 /**
  * Solver definition for the 8 Puzzle challenge
  * Construct a tree of board states using A* to find a path to the goal
  */
-package src;
-
-import java.util.*;
-
 public class Solver {
 
     public int minMoves = -1;
     private State solutionState;
     private boolean solved = false;
+    private Board board;
 
     /**
      * ][\-
@@ -60,7 +59,7 @@ public class Solver {
      * and a identify the shortest path to the the goal state
      */
     public Solver(Board initial) {
-        // TODO: Your code here
+        board = initial;
     }
 
     /*
@@ -68,8 +67,7 @@ public class Solver {
      * Research how to check this without exploring all states
      */
     public boolean isSolvable() {
-//        return this.board.solvable();
-        return false; // until initialization is coded this cannot be implemented
+        return this.board.solvable();
     }
 
     /*

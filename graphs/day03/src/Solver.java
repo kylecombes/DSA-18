@@ -13,6 +13,7 @@ public class Solver {
     private boolean solved = false;
 
     /**
+     * ][\-
      * State class to make the cost calculations simple
      * This class holds a board state and all of its attributes
      */

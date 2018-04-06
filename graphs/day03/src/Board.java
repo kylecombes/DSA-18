@@ -24,7 +24,7 @@ public class Board {
     }
 
     /*
-     * Size of the board 
+     * Size of the board
      (equal to 3 for 8 puzzle, 4 for 15 puzzle, 5 for 24 puzzle, etc)
      */
     private int size() {
@@ -36,7 +36,18 @@ public class Board {
      */
     public int manhattan() {
         // TODO: Your code here
-        return 0;
+        int manhattansum = 0;
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                int val = tiles[x][y];
+                if (val != 0) {
+                    int corr_x = (val - 1) / n;
+                    int corr_y = (val - 1) % n;
+                    manhattansum += Math.abs(corr_x - x) + Math.abs(corr_y - y);
+                }
+            }
+        }
+        return manhattansum;
     }
 
     /*
@@ -44,7 +55,7 @@ public class Board {
      */
     public boolean isGoal() {
         // TODO: Your code here
-        return false;
+        return equals(goal);
     }
 
     /*

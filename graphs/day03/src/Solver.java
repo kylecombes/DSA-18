@@ -1,4 +1,5 @@
 package src;
+import java.util.*;
 
 /**
  * Solver definition for the 8 Puzzle challenge
@@ -27,8 +28,7 @@ public class Solver {
             this.board = board;
             this.moves = moves;
             this.prev = prev;
-            // TODO
-            cost = 0;
+            cost = moves + board.manhattan();
         }
 
         @Override
@@ -37,6 +37,15 @@ public class Solver {
             if (s == null) return false;
             if (!(s instanceof State)) return false;
             return ((State) s).board.equals(this.board);
+        }
+    }
+
+    class costSort implements Comparator<State>
+    {
+        // Used for sorting in descending order of cost
+        public int compare(State a, State b)
+        {
+            return b.cost - a.cost;
         }
     }
 
@@ -60,7 +69,40 @@ public class Solver {
      */
     public Solver(Board initial) {
         board = initial;
+        PriorityQueue<State> open = new PriorityQueue<State>(new costSort());
+        Set<State> closed = new HashSet<State>();
+        while (open.size() > 0) {
+            State curr_state = open.poll(); //Get state with lowest cost
+            while (curr_state.board.neighbors().hasNext()) { //Look through it's neighbors
+                Board nb = curr_state.board.neighbors().next();
+                if (nb.isGoal()) {
+                    return new State(nb, moves + 1, curr_state); // Found the goal
+                }
+                State ns = new State(nb, state.moves + 1, curr_state);
+
+                Iterator<State> it = open.iterator();
+                while (it.hasNext()) {
+                    State os = it.next();
+                    if (os.next().board.equals(nb) && os.cost < ns.cost) {
+                        continue;
+                    }
+                }
+
+                Iterator<State> iter = closed.iterator();
+                while(iter.hasNext()){
+                    cs = iter.next();
+                    if (cs.board.equals(nb) && cs.cost < ns.cost) {
+                        continue;
+                    }
+                }
+                open.add(ns);
+                //ns.prev = curr_board;
+
+            }
+            closed.add(state);
+        }
     }
+
 
     /*
      * Is the input board a solvable state

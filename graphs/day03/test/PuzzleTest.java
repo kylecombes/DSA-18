@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PuzzleTest {
 
-    private Board board;
+    private src.Board board;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -20,10 +20,7 @@ public class PuzzleTest {
         board = new Board(initState);
     }
 
-    // Test board methods
-
-    /**
-     * Test method for void manhattan().
+     /* Test method for void manhattan().
      */
     @Test
     public void testManhattan() {

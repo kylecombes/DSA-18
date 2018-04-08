@@ -40,7 +40,7 @@ public class Solver {
         }
     }
 
-    class costSort implements Comparator<State>
+    class CostSort implements Comparator<State>
     {
         // Used for sorting in descending order of cost
         public int compare(State a, State b)
@@ -69,38 +69,6 @@ public class Solver {
      */
     public Solver(Board initial) {
         board = initial;
-        PriorityQueue<State> open = new PriorityQueue<State>(new costSort());
-        Set<State> closed = new HashSet<State>();
-        while (open.size() > 0) {
-            State curr_state = open.poll(); //Get state with lowest cost
-            while (curr_state.board.neighbors().hasNext()) { //Look through it's neighbors
-                Board nb = curr_state.board.neighbors().next();
-                if (nb.isGoal()) {
-                    return new State(nb, moves + 1, curr_state); // Found the goal
-                }
-                State ns = new State(nb, state.moves + 1, curr_state);
-
-                Iterator<State> it = open.iterator();
-                while (it.hasNext()) {
-                    State os = it.next();
-                    if (os.next().board.equals(nb) && os.cost < ns.cost) {
-                        continue;
-                    }
-                }
-
-                Iterator<State> iter = closed.iterator();
-                while(iter.hasNext()){
-                    cs = iter.next();
-                    if (cs.board.equals(nb) && cs.cost < ns.cost) {
-                        continue;
-                    }
-                }
-                open.add(ns);
-                //ns.prev = curr_board;
-
-            }
-            closed.add(state);
-        }
     }
 
 
@@ -116,8 +84,55 @@ public class Solver {
      * Return the sequence of boards in a shortest solution, null if unsolvable
      */
     public Iterable<Board> solution() {
-        // TODO: Your code here
+        PriorityQueue<State> open = new PriorityQueue<>(new CostSort());
+        Set<State> closed = new HashSet<>();
+        while (open.size() > 0) {
+            State currState = open.poll(); // Get state with lowest cost
+
+            neighborBoards:
+            for (Board nb : currState.board.neighbors()) { // Look through its neighbors
+                if (nb.isGoal()) {
+                    return buildSolution(new State(nb, currState.moves + 1, currState)); // Found the goal
+                }
+                State ns = new State(nb, currState.moves + 1, currState);
+
+                for (State openState : open) {
+                    if (openState.board.equals(nb) && openState.cost < ns.cost) {
+                        continue neighborBoards;
+                    }
+                }
+
+                for (State closedState : closed) {
+                    if (closedState.board.equals(nb) && closedState.cost < ns.cost) {
+                        continue neighborBoards;
+                    }
+                }
+                open.add(ns);
+                ns.prev = currState;
+
+            }
+            closed.add(currState);
+        }
         return null;
+    }
+
+    private Iterable<Board> buildSolution(State solutionState) {
+        Stack<Board> temp = new Stack<>();
+
+        // Add all the boards to a temporary stack (to reverse the order)
+        while (solutionState.prev != null) {
+            temp.add(solutionState.board);
+            solutionState = solutionState.prev;
+        }
+
+        // Now pop every element onto a list
+        List<Board> result = new LinkedList<>();
+        while (!temp.empty()) {
+            result.add(temp.pop());
+        }
+
+        // Return the list
+        return result;
     }
 
     public State find(Iterable<State> iter, Board b) {

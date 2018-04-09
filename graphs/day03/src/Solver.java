@@ -28,6 +28,9 @@ public class Solver {
             this.board = board;
             this.moves = moves;
             this.prev = prev;
+        }
+
+        public void manhattan(){
             cost = moves + board.manhattan();
         }
 
@@ -102,19 +105,20 @@ public class Solver {
             }
             for(Board nb : currState.board.neighbors()){
                 State ns = new State(nb, currState.moves + 1, currState);
-                visited.put(ns.board, ns.cost);
+                visited.put(ns.board, ns.moves);
                 boolean ignore = false;
                 if(openSet.contains(nb)){
-                    if(visited.get(nb) < ns.cost) {
+                    if(visited.get(nb) < ns.moves) {
                         ignore = true;
                     }
                 }
                 if(closed.contains(nb)){
-                    if(visited.get(nb) < ns.cost) {
+                    if(visited.get(nb) < ns.moves) {
                         ignore = true;
                     }
                 }
                 if(!ignore){
+                    ns.manhattan();
                     openSet.add(ns.board);
                     open.add(ns);
                 }

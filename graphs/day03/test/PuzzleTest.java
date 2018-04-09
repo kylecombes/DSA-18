@@ -12,11 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PuzzleTest {
 
     private src.Board board;
+    private src.Board goal;
 
     @BeforeEach
     public void setUp() throws Exception {
         int[][] initState = {{1, 2, 3}, {4, 6, 0}, {7, 5, 8}};
         board = new Board(initState);
+        int[][] solvedState = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+        goal = new Board(solvedState);
     }
 
      /* Test method for void manhattan().
@@ -24,6 +27,7 @@ public class PuzzleTest {
     @Test
     public void testManhattan() {
         assertEquals(board.manhattan(), 3);
+        assertEquals(goal.manhattan(), 0);
     }
 
     /**
@@ -32,6 +36,7 @@ public class PuzzleTest {
     @Test
     public void testGoal() {
         assertEquals(board.isGoal(), false);
+        assertEquals(goal.isGoal(), true);
     }
 
     // Test solver with several initial board states

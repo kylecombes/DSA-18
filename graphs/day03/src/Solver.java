@@ -45,7 +45,7 @@ public class Solver {
         // Used for sorting in descending order of cost
         public int compare(State a, State b)
         {
-            return b.cost - a.cost;
+            return a.cost - b.cost;
         }
     }
 
@@ -69,6 +69,7 @@ public class Solver {
      */
     public Solver(Board initial) {
         board = initial;
+        Iterable<Board> solution = solution();
     }
 
 
@@ -85,31 +86,36 @@ public class Solver {
      */
     public Iterable<Board> solution() {
         PriorityQueue<State> open = new PriorityQueue<>(new CostSort());
+        Set<Board> openSet = new HashSet<>();
+        HashMap<Board, Integer> visited = new HashMap<>();
+        State initialState = new State(board, 0, null);
+        open.add(initialState);
         Set<State> closed = new HashSet<>();
         while (open.size() > 0) {
             State currState = open.poll(); // Get state with lowest cost
-
-            neighborBoards:
-            for (Board nb : currState.board.neighbors()) { // Look through its neighbors
-                if (nb.isGoal()) {
-                    return buildSolution(new State(nb, currState.moves + 1, currState)); // Found the goal
-                }
+            if(currState.board.isGoal()){
+                solved = true;
+                minMoves = currState.moves;
+                return buildSolution(currState);
+            }
+            for(Board nb : currState.board.neighbors()){
                 State ns = new State(nb, currState.moves + 1, currState);
-
-                for (State openState : open) {
-                    if (openState.board.equals(nb) && openState.cost < ns.cost) {
-                        continue neighborBoards;
+                visited.put(ns.board, ns.cost);
+                boolean ignore = false;
+                if(openSet.contains(nb)){
+                    if(visited.get(nb) < ns.cost) {
+                        ignore = true;
                     }
                 }
-
-                for (State closedState : closed) {
-                    if (closedState.board.equals(nb) && closedState.cost < ns.cost) {
-                        continue neighborBoards;
+                if(closed.contains(nb)){
+                    if(visited.get(nb) < ns.cost) {
+                        ignore = true;
                     }
                 }
-                open.add(ns);
-                ns.prev = currState;
-
+                if(!ignore){
+                    openSet.add(ns.board);
+                    open.add(ns);
+                }
             }
             closed.add(currState);
         }

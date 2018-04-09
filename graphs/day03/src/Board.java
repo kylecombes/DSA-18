@@ -21,8 +21,13 @@ public class Board {
      * Set the global board size and tile state
      */
     public Board(int[][] b) {
-        tiles = b;
-        n = tiles.length;
+        n = b.length;
+        tiles = new int[n][n];
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                tiles[i][j] = b[i][j];
+            }
+        }
     }
 
     /*
@@ -55,7 +60,7 @@ public class Board {
      * Compare the current state to the goal state
      */
     public boolean isGoal() {
-        return Arrays.equals(tiles, goal);
+        return Arrays.deepEquals(tiles, goal);
     }
 
     /*
@@ -85,13 +90,16 @@ public class Board {
         List<Board> neighbors = new ArrayList<>();
         int row = 0;
         int col = 0;
-        int dimL = size();
-        for (; row < dimL; row++){
-            for(; col < dimL; col++){
-                if(tiles[row][col] == 0) break;
+        int dimL = n;
+        for (int i = 0; i < dimL; i++){
+            for(int j = 0; j < dimL; j++){
+                if(tiles[i][j] == 0) {
+                    row = i;
+                    col = j;
+                }
             }
         }
-        if(row != 0){
+        if(row < dimL - 1){
             // has room to move up
             int toSwap = tiles[row + 1][col];
             tiles[row][col] = toSwap;
@@ -100,7 +108,7 @@ public class Board {
             tiles[row + 1][col] = toSwap;
             tiles[row][col] = 0;
         }
-        if(row != dimL){
+        if(row > 0){
             // has room to move down
             int toSwap = tiles[row - 1][col];
             tiles[row][col] = toSwap;
@@ -109,7 +117,7 @@ public class Board {
             tiles[row - 1][col] = toSwap;
             tiles[row][col] = 0;
         }
-        if(col != 0){
+        if(col < dimL - 1){
             // has room to move right
             int toSwap = tiles[row][col + 1];
             tiles[row][col] = toSwap;
@@ -118,13 +126,13 @@ public class Board {
             tiles[row][col + 1] = toSwap;
             tiles[row][col] = 0;
         }
-        if(col != dimL){
+        if(col > 0){
             // has room to move left
             int toSwap = tiles[row][col - 1];
             tiles[row][col] = toSwap;
             tiles[row][col - 1] = 0;
             neighbors.add(new Board(tiles));
-            tiles[row - 1][col] = toSwap;
+            tiles[row][col - 1] = toSwap;
             tiles[row][col] = 0;
         }
         return neighbors;
@@ -158,7 +166,7 @@ public class Board {
     @Override
     public int hashCode(){
         int hash = 0;
-        int dimL = size();
+        int dimL = n;
         for (int r = 0; r < dimL; r++){
             for (int c = 0; c < dimL; c++){
                 hash += tiles[r][c] * ((dimL^2)^(dimL*r+c));

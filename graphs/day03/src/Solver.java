@@ -92,7 +92,7 @@ public class Solver {
         HashMap<Board, Integer> visited = new HashMap<>();
         State initialState = new State(board, 0, null);
         open.add(initialState);
-        Set<State> closed = new HashSet<>();
+        Set<Board> closed = new HashSet<>();
         while (open.size() > 0) {
             State currState = open.poll(); // Get state with lowest cost
             if(currState.board.isGoal()){
@@ -119,7 +119,7 @@ public class Solver {
                     open.add(ns);
                 }
             }
-            closed.add(currState);
+            closed.add(currState.board);
         }
         return null;
     }

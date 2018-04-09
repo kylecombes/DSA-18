@@ -69,7 +69,9 @@ public class Solver {
      */
     public Solver(Board initial) {
         board = initial;
-        Iterable<Board> solution = solution();
+        if(isSolvable()){
+            Iterable<Board> solution = solution();
+        }
     }
 
 

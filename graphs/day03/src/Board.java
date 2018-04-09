@@ -74,8 +74,11 @@ public class Board {
         }
         int inversions = 0;
         for (int i = 0; i < linearRep.size()-1; i++){
-            for(int j = i+1; j < linearRep.size(); j++){
-                if (linearRep.get(j) < linearRep.get(i) && linearRep.get(i) != 0 && linearRep.get(j) != 0) inversions++;
+            if (linearRep.get(i) != 0) {
+                for (int j = i + 1; j < linearRep.size(); j++) {
+                    if (linearRep.get(j) < linearRep.get(i) && linearRep.get(j) != 0)
+                        inversions++;
+                }
             }
         }
         return (inversions % 2 == 0);

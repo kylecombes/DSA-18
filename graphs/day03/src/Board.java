@@ -24,9 +24,7 @@ public class Board {
         n = b.length;
         tiles = new int[n][n];
         for(int i = 0; i < n; i++){
-            for(int j = 0; j < n; j++){
-                tiles[i][j] = b[i][j];
-            }
+            System.arraycopy(b[i],0, tiles[i], 0,n);
         }
     }
 
@@ -165,14 +163,7 @@ public class Board {
 
     @Override
     public int hashCode(){
-        int hash = 0;
-        int dimL = n;
-        for (int r = 0; r < dimL; r++){
-            for (int c = 0; c < dimL; c++){
-                hash += tiles[r][c] * ((dimL^2)^(dimL*r+c));
-            }
-        }
-        return hash;
+        return Arrays.deepHashCode(tiles);
     }
 
 

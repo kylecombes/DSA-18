@@ -92,49 +92,42 @@ public class Board {
         int row = 0;
         int col = 0;
         int dimL = n;
+        loopStart:
         for (int i = 0; i < dimL; i++){
             for(int j = 0; j < dimL; j++){
                 if(tiles[i][j] == 0) {
                     row = i;
                     col = j;
+                    break loopStart;
                 }
             }
         }
         if(row < dimL - 1){
             // has room to move up
-            int toSwap = tiles[row + 1][col];
-            tiles[row][col] = toSwap;
-            tiles[row + 1][col] = 0;
-            neighbors.add(new Board(tiles));
-            tiles[row + 1][col] = toSwap;
-            tiles[row][col] = 0;
+            Board nb = new Board(tiles);
+            nb.tiles[row][col] = tiles[row + 1][col];
+            nb.tiles[row + 1][col] = 0;
+            neighbors.add(nb);
         }
         if(row > 0){
             // has room to move down
-            int toSwap = tiles[row - 1][col];
-            tiles[row][col] = toSwap;
-            tiles[row - 1][col] = 0;
-            neighbors.add(new Board(tiles));
-            tiles[row - 1][col] = toSwap;
-            tiles[row][col] = 0;
+            Board nb = new Board(tiles);
+            nb.tiles[row][col] = tiles[row - 1][col];
+            nb.tiles[row - 1][col] = 0;
+            neighbors.add(nb);
         }
         if(col < dimL - 1){
-            // has room to move right
-            int toSwap = tiles[row][col + 1];
-            tiles[row][col] = toSwap;
-            tiles[row][col + 1] = 0;
-            neighbors.add(new Board(tiles));
-            tiles[row][col + 1] = toSwap;
-            tiles[row][col] = 0;
+            Board nb = new Board(tiles);
+            nb.tiles[row][col] = tiles[row][col + 1];
+            nb.tiles[row][col + 1] = 0;
+            neighbors.add(nb);
         }
         if(col > 0){
             // has room to move left
-            int toSwap = tiles[row][col - 1];
-            tiles[row][col] = toSwap;
-            tiles[row][col - 1] = 0;
-            neighbors.add(new Board(tiles));
-            tiles[row][col - 1] = toSwap;
-            tiles[row][col] = 0;
+            Board nb = new Board(tiles);
+            nb.tiles[row][col] = tiles[row][col - 1];
+            nb.tiles[row][col - 1] = 0;
+            neighbors.add(nb);
         }
         return neighbors;
     }

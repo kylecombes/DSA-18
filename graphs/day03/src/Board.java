@@ -154,14 +154,7 @@ public class Board {
             return false;
         }
         // Check if the same tile configuration
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (this.tiles[i][j] != y.tiles[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return Arrays.deepEquals(y.tiles, ((Board) x).tiles);
     }
 
     @Override

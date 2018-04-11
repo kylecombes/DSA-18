@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 // solve() function
 public class RubiksCube {
 
-    private BitSet cube;
+    public BitSet cube;
 
     // initialize a solved rubiks cube
     public RubiksCube() {
@@ -190,8 +190,49 @@ public class RubiksCube {
 
     // return the list of rotations needed to solve a rubik's cube
     public List<Character> solve() {
-        // TODOpur
+
+        HashMap<BitSet, Short> dists = getHeuristicLookupTable(14);
+
         return new ArrayList<>();
+    }
+
+    private HashMap<BitSet, Short> getHeuristicLookupTable(int levels) {
+
+        // TODO Check for file already generated
+
+        HashMap<BitSet, Short> map = new HashMap<>();
+        Queue<RubiksCube> open = new LinkedList<>();
+        ArrayList<Character> possibleMoves = new ArrayList<>();
+        possibleMoves.add('u');
+        possibleMoves.add('U');
+        possibleMoves.add('r');
+        possibleMoves.add('R');
+        possibleMoves.add('f');
+        possibleMoves.add('F');
+
+        // Add the solved cube state
+        RubiksCube solvedCube = new RubiksCube();
+        open.add(solvedCube);
+        map.put(solvedCube.cube, (short)0);
+
+        // Use BFS to explore all the possible states in 'levels' moves
+        while (!open.isEmpty()) {
+            RubiksCube cube = open.poll();
+            short distToNextState = (short)(map.get(cube.cube) + 1);
+
+            if (distToNextState > levels)
+                continue; // Don't go beyond 'levels' deep
+
+            for (char c : possibleMoves) {
+                // Load the current cube state into the RubiksCube object
+                RubiksCube newCube = cube.rotate(c);
+                if (!map.containsKey(newCube.cube)) {
+                    map.put(newCube.cube, distToNextState);
+                    open.add(newCube);
+                }
+            }
+        }
+        return map;
     }
 
 }

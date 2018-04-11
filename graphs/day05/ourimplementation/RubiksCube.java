@@ -190,7 +190,7 @@ public class RubiksCube {
 
     // return the list of rotations needed to solve a rubik's cube
     public List<Character> solve() {
-        // TODO
+        // TODOpur
         return new ArrayList<>();
     }
 

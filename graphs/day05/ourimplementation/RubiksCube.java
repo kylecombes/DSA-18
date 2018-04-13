@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -7,6 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RubiksCube {
 
     public BitSet cube;
+    private String fileName;
 
     // initialize a solved rubiks cube
     public RubiksCube() {
@@ -17,6 +19,7 @@ public class RubiksCube {
                 setColor(side * 4 + i, side);
             }
         }
+        fileName = "needed";
     }
 
     // initialize a rubiks cube with the input bitset
@@ -190,15 +193,41 @@ public class RubiksCube {
 
     // return the list of rotations needed to solve a rubik's cube
     public List<Character> solve() {
-
-        HashMap<BitSet, Short> dists = getHeuristicLookupTable(14);
+        createHeuristicLookupTable(14);
+        HashMap<BitSet, Short> dists = getHeuristicLookupTable();
+        System.out.println(dists);
 
         return new ArrayList<>();
     }
 
-    private HashMap<BitSet, Short> getHeuristicLookupTable(int levels) {
+    private HashMap<BitSet, Short> getHeuristicLookupTable(){
+        try {
+            File file = new File("needed");
+            System.out.println("No need for table! Already here.");
+        }
+        catch (Exception e){
+            createHeuristicLookupTable(14);
+            System.out.println("we need a table!");
+
+        }
+        File file = new File("needed");
+        HashMap<BitSet, Short> map = null;
+        try {
+            FileInputStream f = new FileInputStream(file);
+            ObjectInputStream s = new ObjectInputStream(f);
+            map = (HashMap<BitSet, Short>) s.readObject();
+            s.close();
+        }
+        catch (Exception e) {
+
+        }
+        return map;
+    }
+
+    private HashMap<BitSet, Short> createHeuristicLookupTable(int levels) {
 
         // TODO Check for file already generated
+        System.out.println("We created a lookup table!");
 
         HashMap<BitSet, Short> map = new HashMap<>();
         Queue<RubiksCube> open = new LinkedList<>();
@@ -231,6 +260,18 @@ public class RubiksCube {
                     open.add(newCube);
                 }
             }
+        }
+        FileOutputStream fwriter;
+        try {
+            fwriter = new FileOutputStream("needed");
+            ObjectOutputStream writer = new ObjectOutputStream(fwriter);
+
+            writer.writeObject(map);
+
+            writer.close(); //don't forget to close the writer
+        }
+        catch (Exception e){
+//            fwriter = new FileOutputStream("sample", 1);
         }
         return map;
     }

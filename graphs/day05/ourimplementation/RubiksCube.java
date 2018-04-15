@@ -10,6 +10,7 @@ public class RubiksCube {
     public BitSet cube;
     private static final String LOOKUP_TABLE_FILENAME = "LookupTable.dsa";
     private static final char[] POSSIBLE_MOVES  = {'u', 'U', 'r', 'R', 'f', 'F'};
+    private static HashMap<BitSet, Short> dists;
     public char moveToHere;
     public int gCost;
     public int fCost;
@@ -24,6 +25,18 @@ public class RubiksCube {
                 setColor(side * 4 + i, side);
             }
         }
+    }
+
+    public RubiksCube(HashMap<BitSet, Short> blep) {
+        // 24 colors to store, each takes 3 bits
+        cube = new BitSet(24 * 3);
+        for (int side = 0; side < 6; side++) {
+            for (int i = 0; i < 4; i++) {
+                setColor(side * 4 + i, side);
+            }
+        }
+        dists = blep;
+
     }
 
     // initialize a rubiks cube with the input bitset
@@ -194,12 +207,23 @@ public class RubiksCube {
         return listTurns;
     }
 
+    public class StateComparator implements Comparator<RubiksCube>
+    {
+        public int compare( RubiksCube x, RubiksCube y )
+        {
+            return x.fCost - y.fCost;
+        }
+    }
+
 
     // return the list of rotations needed to solve a rubik's cube
     public List<Character> solve() {
-        HashMap<BitSet, Short> dists = getHeuristicLookupTable();
+        if (dists == null)
+            loadHeuristicLookupTable();
+        HashMap<BitSet, Short> dists = RubiksCube.dists;
+        StateComparator comparator = new StateComparator();
 
-        PriorityQueue<RubiksCube> open = new PriorityQueue<>();
+        PriorityQueue<RubiksCube> open = new PriorityQueue<>(11, comparator);
         open.add(this);
 
         while (!open.isEmpty()) {
@@ -234,6 +258,26 @@ public class RubiksCube {
         return new ArrayList<>();
     }
 
+    public static void loadHeuristicLookupTable() {
+        File file = new File(LOOKUP_TABLE_FILENAME);
+        try {
+            FileInputStream f = new FileInputStream(file);
+            System.out.println("Lookup table file saved. Loading...");
+            ObjectInputStream s = new ObjectInputStream(f);
+            dists = (HashMap<BitSet, Short>) s.readObject();
+            s.close();
+            f.close();
+            System.out.println("Successfully loaded lookup table from disk.");
+        }
+        catch (FileNotFoundException e){
+            System.out.println("Lookup table not yet generated. Generating...");
+            dists = createHeuristicLookupTable(14);
+            System.out.println("Lookup table successfully generated.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
     private List<Character> buildSolution(RubiksCube finalState) {
         List<Character> result = new ArrayList<>();
         while (finalState.prevState != null) {
@@ -242,15 +286,9 @@ public class RubiksCube {
         }
         Collections.reverse(result);
         return result;
-    }
-
-    private HashMap<BitSet, Short> getHeuristicLookupTable(){
-
-        return createHeuristicLookupTable(14);
 
     }
-
-    private HashMap<BitSet, Short> createHeuristicLookupTable(int levels) {
+    private static HashMap<BitSet, Short> createHeuristicLookupTable(int levels) {
 
 
         HashMap<BitSet, Short> map = new HashMap<>();
@@ -287,12 +325,13 @@ public class RubiksCube {
         }
         FileOutputStream fwriter;
         try {
-            fwriter = new FileOutputStream("needed");
+            fwriter = new FileOutputStream(LOOKUP_TABLE_FILENAME);
             ObjectOutputStream writer = new ObjectOutputStream(fwriter);
 
             writer.writeObject(map);
 
             writer.close(); //don't forget to close the writer
+            fwriter.close();
         }
         catch (Exception e){
 //            fwriter = new FileOutputStream("sample", 1);

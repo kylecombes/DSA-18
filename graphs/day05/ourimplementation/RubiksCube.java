@@ -8,7 +8,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RubiksCube {
 
     public BitSet cube;
-    private String fileName;
+    private static final String LOOKUP_TABLE_FILENAME = "LookupTable.dsa";
+    private static final char[] POSSIBLE_MOVES  = {'u', 'U', 'r', 'R', 'f', 'F'};
+    public char moveToHere;
+    public int gCost;
+    public int fCost;
+    public RubiksCube prevState;
 
     // initialize a solved rubiks cube
     public RubiksCube() {
@@ -19,7 +24,6 @@ public class RubiksCube {
                 setColor(side * 4 + i, side);
             }
         }
-        fileName = "needed";
     }
 
     // initialize a rubiks cube with the input bitset
@@ -193,41 +197,61 @@ public class RubiksCube {
 
     // return the list of rotations needed to solve a rubik's cube
     public List<Character> solve() {
-        createHeuristicLookupTable(14);
         HashMap<BitSet, Short> dists = getHeuristicLookupTable();
-        System.out.println(dists);
+
+        PriorityQueue<RubiksCube> open = new PriorityQueue<>();
+        open.add(this);
+
+        while (!open.isEmpty()) {
+            RubiksCube current = open.poll();
+
+            // Check if we've reached the goal
+            if (dists.get(current.cube) == 0) {
+                return buildSolution(current);
+            }
+
+            // Try each possible move from here
+            for (char move : POSSIBLE_MOVES) {
+                RubiksCube nextState = current.rotate(move);
+                nextState.gCost = current.gCost + 1;
+                nextState.fCost = nextState.gCost + dists.get(nextState.cube);
+
+                // Check if we should ignore this state for any reason
+                boolean ignore = false;
+                for (RubiksCube cube : open)
+                    if (cube.cube.equals(nextState.cube))
+                        ignore = true;
+
+                if (!ignore) {
+                    nextState.moveToHere = move;
+                    nextState.prevState = current;
+                    open.add(nextState);
+                }
+            }
+        }
+
 
         return new ArrayList<>();
     }
 
+    private List<Character> buildSolution(RubiksCube finalState) {
+        List<Character> result = new ArrayList<>();
+        while (finalState.prevState != null) {
+            result.add(finalState.moveToHere);
+            finalState = finalState.prevState;
+        }
+        Collections.reverse(result);
+        return result;
+    }
+
     private HashMap<BitSet, Short> getHeuristicLookupTable(){
-        try {
-            File file = new File("needed");
-            System.out.println("No need for table! Already here.");
-        }
-        catch (Exception e){
-            createHeuristicLookupTable(14);
-            System.out.println("we need a table!");
 
-        }
-        File file = new File("needed");
-        HashMap<BitSet, Short> map = null;
-        try {
-            FileInputStream f = new FileInputStream(file);
-            ObjectInputStream s = new ObjectInputStream(f);
-            map = (HashMap<BitSet, Short>) s.readObject();
-            s.close();
-        }
-        catch (Exception e) {
+        return createHeuristicLookupTable(14);
 
-        }
-        return map;
     }
 
     private HashMap<BitSet, Short> createHeuristicLookupTable(int levels) {
 
-        // TODO Check for file already generated
-        System.out.println("We created a lookup table!");
 
         HashMap<BitSet, Short> map = new HashMap<>();
         Queue<RubiksCube> open = new LinkedList<>();

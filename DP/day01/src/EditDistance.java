@@ -12,7 +12,7 @@ public class EditDistance {
         DP[0][0] = a.charAt(0) == b.charAt(0) ? 0 : 1;
         // Keep track of if we've found a match for our first character
         boolean foundCharMatch = DP[0][0] == 0;
-        for (short i = 1; i < a.length(); ++i) { // First row
+        for (short i = 1; i < a.length(); ++i) { // First column
             if (!foundCharMatch && a.charAt(i) == b.charAt(0)) {
                 DP[i][0] = DP[i-1][0];
                 foundCharMatch = true;
@@ -21,7 +21,7 @@ public class EditDistance {
             }
         }
         foundCharMatch = DP[0][0] == 0;
-        for (short i = 1; i < b.length(); ++i) { // First column
+        for (short i = 1; i < b.length(); ++i) { // First row
             if (!foundCharMatch && a.charAt(0) == b.charAt(i)) {
                 DP[0][i] = DP[0][i-1];
                 foundCharMatch = true;

@@ -18,16 +18,16 @@ public class TextJustification {
     public static List<Integer> justifyText(String[] w, int m) {
         // Build DP array
         double[][] DP = new double[w.length][w.length];
-        for (int i = 0; i < w.length; ++i) {
-            for (int j = i; j < w.length; ++j) {
-                DP[i][j] = cost(w, i, j+1, m);
+        for (int i = 0; i < w.length; ++i) { // O(N) -- O(N^3)
+            for (int j = i; j < w.length; ++j) { // O(N)
+                DP[i][j] = cost(w, i, j+1, m); // O(N)
             }
         }
 
         double[] costs = new double[w.length];
         int[] lineIndices = new int[w.length];
 
-        for (int i = w.length - 1; i >= 0; --i) {
+        for (int i = w.length - 1; i >= 0; --i) { // O(N) -- O(N^2)
             if (DP[i][w.length-1] < Double.POSITIVE_INFINITY) {
                 costs[i] = DP[i][w.length-1]; // Note the cost of having this word on this line
                 lineIndices[i] = w.length; // Note which word is the first word on the line after word i
@@ -35,7 +35,7 @@ public class TextJustification {
                 double bestSplitCost = Double.POSITIVE_INFINITY;
                 int bestSplitJ = w.length - 1;
                 // Determine where the best position to split is
-                for (int j = w.length-1; j > i; --j) {
+                for (int j = w.length-1; j > i; --j) { // O(N)
                     // Sum up the best costs between i and j and the best cost beyond j
                     double costSum = DP[i][j-1] + costs[j];
                     if (costSum < bestSplitCost) {
@@ -53,7 +53,7 @@ public class TextJustification {
         List<Integer> wordsStartingLines = new LinkedList<>();
         wordsStartingLines.add(0);
         int i = lineIndices[0];
-        while (i < w.length) {
+        while (i < w.length) {  // O(N)
             wordsStartingLines.add(i);
             i = lineIndices[i];
         }
